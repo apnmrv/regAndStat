@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Birthday reminder{% endblock %}
+
+
+{% block body %}
+
+<div class="example-wrapper">
+    <h1>Hurry to send'em good wishes</h1>
+    <ol>
+    {% for user in data %}
+        <li>{{ user.firstName }} {{ user.lastName }} born {{ user.dateOfBirth | date("j") }} of {{ user.dateOfBirth | date("F") }} in {{ user.dateOfBirth | date("Y") }}</li>
+    {% endfor %}
+    </ol>
+</div>
+{% endblock %}
