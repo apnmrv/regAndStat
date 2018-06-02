@@ -8,8 +8,18 @@
 
 namespace App\Service;
 
+use App\Entity\LoginEvent;
 
-class LoginEventHandler
+class LoginEventHandler extends UserEventsHandler
 {
-
+    /**
+     * Creates Login event and persist it
+     */
+    public function handleEvent() : void
+    {
+        $this->event = new LoginEvent($this->user,
+            $this->dateTimeHandler->getDateObjectFromString($this->date),
+            $this->dateTimeHandler->getDateObjectFromString($this->time));
+        $this->persistEvent();
+    }
 }

@@ -6,14 +6,19 @@
 {% block body %}
 
 <div class="example-wrapper">
-    {#<h1>This month registrations</h1>#}
-    {#<ul>#}
-    {#{% for elem in data %}#}
-        {#<li>City : {{ elem.city }} </li>#}
-        {#<p>Registrations : {{ elem.registrations }}</p>#}
-    {#{% endfor %}#}
-    {#</ul>#}
+    <h1>Last days visitors</h1>
+    <ul>
+    {% for elem in data %}
+        <li>User : {{ elem.name }} </li>
+        <p>Visits</p>
+        <ul>
+            {% for k,v in elem.visits %}
+            <li>Date : {{ k }} || Visits : {{ v }}</li>
+            {% endfor %}
+        </ul>
+        </br>
+    {% endfor %}
+    </ul>
 
-    var_dump({{ data }});
 </div>
 {% endblock %}

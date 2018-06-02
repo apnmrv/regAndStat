@@ -8,8 +8,12 @@
 
 namespace App\Service;
 
+use DateTime;
+use Doctrine\ORM\EntityManager;
+use App\Entity\User;
+use Exception;
 
-abstract class UserEventHandler
+abstract class UserEventsHandler
 {
     protected $user;
 
@@ -17,7 +21,34 @@ abstract class UserEventHandler
 
     protected $time;
 
-    abstract public function handleRegistrationEvent();
+    protected $entityManager;
 
-    abstract public function handleLoginEvent();
+    protected $event;
+
+    protected $dateTimeHandler;
+
+    /**
+     * UserEventsHandler constructor.
+     * @param User $user
+     * @param EntityManager $em
+     *
+     * @param DateTimeHandler $dateTimeHandler
+     */
+    public function __construct(User $user, EntityManager $em, DateTimeHandler $dateTimeHandler)
+    {
+        $this->user = $user;
+        $this->entityManager = $em;
+        $this->dateTimeHandler = $dateTimeHandler;
+
+        $this->date = $this->dateTimeHandler->getDateNow();
+        $this->time = $this->dateTimeHandler->getTimeNow();
+    }
+
+    protected function persistEvent()
+    {
+        $this->entityManager->persist($this->event);
+        $this->entityManager->flush();
+    }
+
+    abstract public function handleEvent();
 }

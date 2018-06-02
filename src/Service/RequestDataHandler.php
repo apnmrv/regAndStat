@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 
-class UserRegistrationRequest
+class RequestDataHandler
 {
     /**
      * @Assert\NotBlank()
@@ -35,13 +35,6 @@ class UserRegistrationRequest
      * @var string
      */
     public $email;
-
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Length(min="7", max="20")
-     * @var string
-     */
-   // public $plainPassword;
 
     /**
      * @Assert\NotBlank()
@@ -92,21 +85,53 @@ class UserRegistrationRequest
      */
     public $cityName;
 
+    /**
+     * @var \Doctrine\Common\Persistence\ObjectRepository|EntityRepository
+     */
     private $userRepository;
 
+    /**
+     * @var \Doctrine\Common\Persistence\ObjectRepository|EntityRepository
+     */
     private $countryRepository;
 
+    /**
+     * @var \Doctrine\Common\Persistence\ObjectRepository|EntityRepository
+     */
     private $cityRepository;
 
+    /**
+     * @var EntityManager
+     */
     private $manager;
 
+    /**
+     * @var UserPasswordEncoderInterface
+     */
     private $encoder;
 
+    /**
+     * @var Country
+     */
     private $country;
 
+    /*
+     * @var City
+     */
     private $city;
 
-    public function __construct(EntityManager $em, UserPasswordEncoderInterface $passwordEncoder)
+    /**
+     * @var User
+     */
+    private $user;
+
+    /**
+     * RequestDataHandler constructor.
+     * @param EntityManager $em
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     */
+    public function __construct(EntityManager $em,
+                                UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->manager = $em;
         $this->userRepository = $this->manager->getRepository(User::class);
@@ -115,17 +140,30 @@ class UserRegistrationRequest
         $this->encoder = $passwordEncoder;
     }
 
-    public function addUser() : void
+    /**
+     * Data Processor
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function processData() : void
     {
+
         $this->checkCreateCountry();
         $this->checkCreateCity();
         $this->checkCreateUser();
+        (new RegEventHandler($this->user, $this->manager, new DateTimeHandler()))->handleEvent();
+
+        return;
     }
 
+    /**
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     private function checkCreateCountry() : void
     {
         $country = $this->countryRepository
-            ->findOneBy(['name' => $this->countryName]);
+            ->findOneByName($this->countryName);
 
         if(null === $country) {
 
@@ -136,29 +174,45 @@ class UserRegistrationRequest
             $this->manager->flush();
         }
         $this->country = $this->countryRepository
-            ->findOneBy(['name' => $this->countryName]);
+            ->findOneByName($this->countryName);
+
+        return;
     }
 
-    private function checkCreateCity()
+    /**
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    private function checkCreateCity() : void
     {
         $city = $this->cityRepository
-            ->findOneBy(['name' => $this->cityName]);
+            ->findOneByCountryAndName($this->country, $this->cityName);
+
         if(null === $city) {
 
             $city = new City();
+
             $city->setName($this->cityName);
             $city->setCountry($this->country);
+
             $this->manager->persist($city);
             $this->manager->flush();
         }
         $this->city = $this->cityRepository
-            ->findOneBy(['name' => $this->cityName]);
+            ->findOneByCountryAndName($this->country, $this->cityName);
+
+        return;
     }
 
-    private function checkCreateUser()
+    /**
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    private function checkCreateUser() : void
     {
         $user = $this->userRepository
-            ->findOneBy(['username' => $this->username]);
+            ->findOneByUsername($this->username);
+
         if(null === $user) {
             $user = new User();
             $user->setUserName($this->username);
@@ -173,6 +227,10 @@ class UserRegistrationRequest
             $user->setCity($this->city);
             $this->manager->persist($user);
             $this->manager->flush();
-        }
+    }
+
+    $this->user = $user;
+
+        return;
     }
 }

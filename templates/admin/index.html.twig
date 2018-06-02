@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello {{ controller_name }}!{% endblock %}
+{% block title %}Admin zone {% endblock %}
 
 {% block body %}
 <style>
@@ -9,12 +9,18 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
 
-    This friendly message is coming from:
+    <h1>Congrats, u r at the right place now !</h1>
+
+    <h2>Hence come out and do your job :</h2>
+
     <ul>
-        <li>Your controller at <code><a href="{{ 'src/Controller/CityController.php'|file_link(0) }}">src/Controller/CityController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'templates/city/index.html.twig'|file_link(0) }}">templates/city/index.html.twig</a></code></li>
+        <li><code><a href="{{ path ('this-month-registrations') }}">Users' registered this month</a></code></li>
+        <li><code><a href="{{ path ('last-days-visits') }}">Unique visits : This week statistics</a></code></li>
+        <li><code><a href="{{ path ('last-days-visitors') }}">Each user visits per day : This week statistics</a></code></li>
+        <li><code><a href="{{ path ('birthday-reminder') }}">Birthday reminder</a></code></li>
     </ul>
+    <p>Not in a condition yet?</p>
+    <p>Be free to <code><a href="{{ path ('logout') }}">logout</a>, bro</code></p>
 </div>
 {% endblock %}

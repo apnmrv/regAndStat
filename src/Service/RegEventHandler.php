@@ -8,8 +8,14 @@
 
 namespace App\Service;
 
+use App\Entity\RegistrationEvent;
 
-class RegEventHandler
+class RegEventHandler extends UserEventsHandler
 {
-
+    public function handleEvent()
+    {
+        $this->event = new RegistrationEvent($this->user,
+            $this->dateTimeHandler->getDateObjectFromString($this->date));
+        $this->persistEvent();
+    }
 }

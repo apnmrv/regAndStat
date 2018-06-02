@@ -7,9 +7,20 @@
  */
 
 namespace App\Tests\Entity;
+use PHPUnit\Framework\TestCase;
+use App\Entity\City;
 
 
-class CityTest
+class CityTest extends TestCase
 {
+    /**
+     * @test
+     */
+    public function happyCreation()
+    {
+        $city = new City();
 
+        $this->assertInstanceOf(City::class, $city);
+
+    }
 }

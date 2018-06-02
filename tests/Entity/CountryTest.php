@@ -8,7 +8,7 @@
 
 namespace App\Tests\Entity\Country;
 
-use App\Entity\Country\Country;
+use App\Entity\Country;
 use PHPUnit\Framework\TestCase;
 
 class CountryTest extends TestCase
@@ -20,6 +20,6 @@ class CountryTest extends TestCase
     {
         $country = new Country();
 
-        assertNotNull($country->getId());
+        $this->assertInstanceOf(Country::class, $country);
     }
 }
